@@ -3,6 +3,7 @@ using Final.DAL.Repositories.Stadiums;
 using Final.Domain.Entity;
 using Final.Domain.Enum;
 using Final.Domain.Response;
+using Final.Domain.ViewModel.Stadiums;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Stadiums;
@@ -44,7 +45,7 @@ public class StadiumService : IStadiumService
         } 
     }
 
-        public async Task<IBaseResponse<Stadium>> CreateStadium(Stadium model, byte[] imageData)
+        public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, byte[] imageData)
         {
             try
             {
