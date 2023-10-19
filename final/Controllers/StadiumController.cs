@@ -29,6 +29,7 @@ namespace final.Controllers
         //{
         //    var response =  _stadiumService.GetStadium(id);
         //    return Ok(response);
+        //
         //}
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
