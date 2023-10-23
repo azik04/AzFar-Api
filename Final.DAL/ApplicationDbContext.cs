@@ -1,6 +1,7 @@
 ﻿using Final.Domain.Entity;
 using Microsoft.EntityFrameworkCore;
 namespace Final.DAL;
+using Microsoft.EntityFrameworkCore;
 
 public class ApplicationDbContext : DbContext
 {
