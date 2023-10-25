@@ -2,6 +2,7 @@
 using Final.BLL.Services.Stadiums;
 using Final.Domain.Entity;
 using Final.Domain.ViewModel.Stadiums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace final.Controllers
         {
             _stadiumService = stadiumService;
         }
+        [Authorize]
         [HttpGet]
         public IActionResult GetStadiums()
         {
@@ -24,13 +26,14 @@ namespace final.Controllers
             return Ok(response.Data);
         }
 
-        //[HttpGet]
-        //public IActionResult GetStadium(int id)
-        //{
-        //    var response =  _stadiumService.GetStadium(id);
-        //    return Ok(response);
-        //
-        //}
+        [HttpGet]
+        [Route("GetStadium")]
+        public IActionResult GetStadium(int id)
+        {
+            var response =  _stadiumService.GetStadium(id);
+            return Ok(response);
+       
+        }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
