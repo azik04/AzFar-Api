@@ -25,7 +25,7 @@ namespace final.Controllers
             {
                 return Ok(response.Data);
             }
-            return RedirectToAction("Index", "Home");
+            return BadRequest(new { errorMessage = response.Description });
         }
         [HttpPost]
         public async Task<IActionResult> Save(UserViewModel model)

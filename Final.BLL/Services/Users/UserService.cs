@@ -28,16 +28,7 @@ namespace Automarket.Service.Implementations
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Name == model.Name);
-                if (user != null)
-                {
-                    return new BaseResponse<User>()
-                    {
-                        Description = "Пользователь с таким логином уже есть",
-                        StatusCode = StatusCode.UserAlreadyExists
-                    };
-                }
-                user = new User()
+                var user = new User()
                 {
                     Name = model.Name,
                     Role = Enum.Parse<Role>(model.Role),
@@ -99,7 +90,7 @@ namespace Automarket.Service.Implementations
                         Role = x.Role.GetDisplayName()
                     })
                     .ToListAsync();
-
+                
                 _logger.LogInformation($"[UserService.GetUsers] получено элементов {users.Count}");
                 return new BaseResponse<IEnumerable<UserViewModel>>()
                 {

@@ -17,5 +17,9 @@ namespace Final.Domain.ViewModel.Users;
         [Required(ErrorMessage = "Укажите пароль")]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
-    }
+
+        [Required(ErrorMessage = "Укажите номер")]
+        [Display(Name = "Номер")]
+        public string Phone { get; set; }
+}
 

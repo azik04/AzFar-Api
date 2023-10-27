@@ -1,5 +1,6 @@
 ﻿using Automarket.DAL.Repositories;
 using Automarket.Service.Implementations;
+using Final.BLL.Services.Accounts;
 using Final.BLL.Services.Orders;
 using Final.BLL.Services.OrderTimes;
 using Final.BLL.Services.Stadiums;
@@ -27,5 +28,6 @@ public static class Initializer
         services.AddScoped<IOrderTimeService, OrderTimeService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAccountService, AccountService>();
     }
 }
