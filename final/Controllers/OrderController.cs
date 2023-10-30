@@ -1,6 +1,5 @@
 ﻿using Final.BLL.Services.Orders;
 using Final.Domain.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace final.Controllers;
@@ -19,8 +18,12 @@ public class OrderController : ControllerBase
     public IActionResult GetOrders()
     {
         var response = _orderService.GetOrders();
-        return Ok(response.Data);
-    }
+        if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+        {
+            return Ok(response.Data);
+        }
+            return BadRequest($"{response.Description}");
+}
 
     [HttpPost]
     public async Task<IActionResult> CreateOrder(Order model)
@@ -30,6 +33,6 @@ public class OrderController : ControllerBase
             {
                 return Ok(new { description = response.Description });
             }
-        return StatusCode(StatusCodes.Status500InternalServerError);
+            return BadRequest($"{response.Description}");
     }
 }

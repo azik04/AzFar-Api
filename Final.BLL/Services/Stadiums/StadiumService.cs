@@ -4,6 +4,7 @@ using Final.Domain.Entity;
 using Final.Domain.Enum;
 using Final.Domain.Response;
 using Final.Domain.ViewModel.Stadiums;
+using Microsoft.AspNetCore.Http;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Stadiums;
@@ -11,25 +12,27 @@ namespace Final.BLL.Services.Stadiums;
 public class StadiumService : IStadiumService
 {
     private readonly IBaseRepository<Stadium> _stadiumRepository;
-
-    public StadiumService(IBaseRepository<Stadium> stadiumRepository)
+    private readonly IBaseRepository<StadiumPhotos> _stadiumPhotosRepository;
+    public StadiumService(IBaseRepository<Stadium> stadiumRepository, IBaseRepository<StadiumPhotos> stadiumPhotosRepository)
     {
         _stadiumRepository = stadiumRepository;
+        _stadiumPhotosRepository = stadiumPhotosRepository;
     }
-    public async Task<IBaseResponse<Stadium>> GetStadium(long id)
+    public async Task<IBaseResponse<StadiumViewModel>> GetStadium(long id)
     {
         try
         {
-            var stadium = _stadiumRepository.GetAll().SingleOrDefault(x => x.Id == id);
+            var stadium =  _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
+            var img = _stadiumPhotosRepository.GetAll().ToList().Where(x => x.StadiumId == id);
 
-            var data = new Stadium()
+            var data = new StadiumViewModel()
             {
                 Adress = stadium.Adress,
                 Name = stadium.Name,
-                Avatar = stadium.Avatar,
+                StadiumPhotos = img.ToList()
             };
 
-            return new BaseResponse<Stadium>()
+            return new BaseResponse<StadiumViewModel>()
             {
                 StatusCode = StatusCode.OK,
                 Data = data
@@ -37,7 +40,7 @@ public class StadiumService : IStadiumService
         }
         catch (Exception ex)
         {
-            return new BaseResponse<Stadium>()
+            return new BaseResponse<StadiumViewModel>()
             {
                 Description = $"[GetStadium] : {ex.Message}",
                 StatusCode = StatusCode.InternalServerError
@@ -45,19 +48,29 @@ public class StadiumService : IStadiumService
         } 
     }
 
-        public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, byte[] imageData)
+        public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, IFormFile StadiumPhoto)
         {
             try
             {
                 var Stadium = new Stadium()
                 {
                     Name = model.Name,
-                    Avatar = imageData,
                     Adress = model.Adress,
                 };
                 await _stadiumRepository.Create(Stadium);
 
-                return new BaseResponse<Stadium>()
+                var StadiumPphoto = new StadiumPhotos()
+                {
+                    StadiumId = model.Id,
+                    PhotoPath = StadiumPhoto.FileName
+                };
+                await _stadiumPhotosRepository.Create(StadiumPphoto);
+                string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Path.GetExtension(StadiumPhoto.FileName);
+                using (Stream stream = new FileStream("Upload/Files/" + fileName, FileMode.Create))
+                {
+                    StadiumPhoto.CopyTo(stream);
+                }
+            return new BaseResponse<Stadium>()
                 {
                     StatusCode = StatusCode.OK,
                     Data = Stadium
@@ -78,9 +91,12 @@ public class StadiumService : IStadiumService
         try
         {
             var stadium = _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
-
+            var img = _stadiumPhotosRepository.GetAll().ToList().Where(x => x.StadiumId == id);
             await _stadiumRepository.Delete(stadium);
-
+            foreach (var item in img)
+            {
+                await _stadiumPhotosRepository.Delete(item);
+            }
             return new BaseResponse<bool>()
             {
                 Data = true,
@@ -102,6 +118,11 @@ public class StadiumService : IStadiumService
         try
         {
             var stadium = _stadiumRepository.GetAll().ToList();
+            foreach (var item in stadium)
+            {
+                var img = _stadiumPhotosRepository.GetAll().ToList().Where(x => x.StadiumId == item.Id);
+                item.Img = img.ToList();
+            }
             return new BaseResponse<List<Stadium>>()
             {
                 Data = stadium,

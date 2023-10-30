@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Final.Domain\Final.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\img\" />
+  </ItemGroup>
+
 </Project>

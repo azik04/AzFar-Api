@@ -23,7 +23,12 @@ namespace final.Controllers
         public IActionResult GetStadiums()
         {
             var response = _stadiumService.GetStadiums();
-            return Ok(response.Data);
+            if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest($"{response.Description}");
         }
 
         [HttpGet]
@@ -38,26 +43,23 @@ namespace final.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _stadiumService.DeleteStadium(id);
-            return RedirectToAction("GetStadiums");
+            if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+            {
+                return Ok();
+            }
+            return BadRequest($"{response.Description}");
         }
         [HttpPost]
-        public async Task<IActionResult> CreateStadium(StadiumViewModel model)
+        public async Task<IActionResult> Create(StadiumViewModel viewModel)
         {
             ModelState.Remove("Id");
-            ModelState.Remove("DateCreate");
-            if (ModelState.IsValid)
+
+            if (viewModel.Id == 0)
             {
-                if (model.Id == 0)
-                {
-                    byte[] imageData;
-                    using (var binaryReader = new BinaryReader(model.Avatar.OpenReadStream()))
-                    {
-                        imageData = binaryReader.ReadBytes((int)model.Avatar.Length);
-                    }
-                    await _stadiumService.CreateStadium(model, imageData);
-                }
+                await _stadiumService.CreateStadium(viewModel, null);
             }
-            return RedirectToAction("GetStadiums");
+
+            return Ok("AllCar");
         }
     }
 }

@@ -20,7 +20,12 @@ namespace final.Controllers
         public IActionResult GetOrderTimes()
         {
             var response = _timeService.GetOrderTimes();
-            return Ok(response.Data);
+            if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+            {
+                return Ok(response.Data);
+            }
+
+            return BadRequest($"{response.Description}");
         }
     }
 }

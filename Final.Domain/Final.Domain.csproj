@@ -15,4 +15,8 @@
     <PackageReference Include="OpenIddict.Client" Version="4.8.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Upload\Files\" />
+  </ItemGroup>
+
 </Project>
