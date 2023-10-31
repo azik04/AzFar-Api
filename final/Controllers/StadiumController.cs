@@ -59,7 +59,7 @@ namespace final.Controllers
                 await _stadiumService.CreateStadium(viewModel, null);
             }
 
-            return Ok("AllCar");
+            return Ok();
         }
     }
 }

@@ -66,7 +66,7 @@ public class StadiumService : IStadiumService
                 };
                 await _stadiumPhotosRepository.Create(StadiumPphoto);
                 string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Path.GetExtension(StadiumPhoto.FileName);
-                using (Stream stream = new FileStream("Upload/Files/" + fileName, FileMode.Create))
+                using (Stream stream = new FileStream("wwwroot/Files/" + fileName, FileMode.Create))
                 {
                     StadiumPhoto.CopyTo(stream);
                 }

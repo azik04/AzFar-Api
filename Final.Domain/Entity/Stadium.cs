@@ -13,6 +13,5 @@ public class Stadium
 
 
     public string? Adress { get; set; }
-    public DateTime? CreatedDate { get; set; }
-    public List<StadiumPhotos> Img { get; set; }
+    public List<StadiumPhotos>? Img { get; set; }
 }

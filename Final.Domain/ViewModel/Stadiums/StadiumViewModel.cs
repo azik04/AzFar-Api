@@ -10,14 +10,12 @@ namespace Final.Domain.ViewModel.Stadiums
         [Display(Name = "Название")]
         [Required(ErrorMessage = "Введите имя")]
         [MinLength(2, ErrorMessage = "Минимальная длина должна быть больше двух символов")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Адресс")]
-        [MinLength(50, ErrorMessage = "Минимальная длина должна быть больше 50 символов")]
-        public string Adress { get; set; }
+        [MinLength(5, ErrorMessage = "Минимальная длина должна быть больше 50 символов")]
+        public string? Adress { get; set; }
 
-        public string DateCreate { get; set; }
-
-        public List<StadiumPhotos> StadiumPhotos { get; set; }
+        public List<StadiumPhotos>? StadiumPhotos { get; set; }
     }
 }

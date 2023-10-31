@@ -2,9 +2,9 @@
 
 public class StadiumPhotos
 {
-    public long Id { get; set; }
+    public long? Id { get; set; }
 
-    public string PhotoPath { get; set; }
+    public string? PhotoPath { get; set; }
 
-    public long StadiumId { get; set; }
+    public long? StadiumId { get; set; }
 }
