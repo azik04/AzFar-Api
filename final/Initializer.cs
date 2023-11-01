@@ -1,6 +1,7 @@
 ﻿using Final.BLL.Services.Orders;
 using Final.BLL.Services.OrderTimes;
 using Final.BLL.Services.Stadiums;
+using Final.BLL.Services.Users;
 using Final.DAL.Repositories;
 using Final.DAL.Repositories.Orders;
 using Final.DAL.Repositories.OrderTimes;
@@ -24,5 +25,6 @@ public static class Initializer
         services.AddScoped<IStadiumService, StadiumService>();
         services.AddScoped<IOrderTimeService, OrderTimeService>();
         services.AddScoped<IOrderService, OrderService>();
+
     }
 }

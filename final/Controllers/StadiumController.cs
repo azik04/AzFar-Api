@@ -35,7 +35,7 @@ namespace final.Controllers
         [Route("GetStadium")]
         public IActionResult GetStadium(int id)
         {
-            var response =  _stadiumService.GetStadium(id);
+            var response = _stadiumService.GetStadium(id);
             return Ok(response);
        
         }
@@ -50,13 +50,13 @@ namespace final.Controllers
             return BadRequest($"{response.Description}");
         }
         [HttpPost]
-        public async Task<IActionResult> Create(StadiumViewModel viewModel)
+        public async Task<IActionResult> Create(StadiumViewModel viewModel, IFormFile StadiumPhoto)
         {
             ModelState.Remove("Id");
 
             if (viewModel.Id == 0)
             {
-                await _stadiumService.CreateStadium(viewModel, null);
+                await _stadiumService.CreateStadium(viewModel, StadiumPhoto);
             }
 
             return Ok();
