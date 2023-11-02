@@ -1,5 +1,4 @@
 using final;
-using Final.BLL.Services.Users;
 using Final.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -13,20 +12,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("Stadiumlar"));
-
+    options.UseSqlServer(connection));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+        options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+    });
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddCors(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    options.AddDefaultPolicy(option =>
     {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
+
+
 });
+builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
+
+
+builder.Services.InitializeRepositories();
+builder.Services.InitializeServices();
 builder.Services.AddAuthentication().AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -38,11 +48,6 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
                 builder.Configuration.GetSection("AppSettings:Token").Value!))
     };
 });
-builder.Services.AddHttpClient();
-
-
-builder.Services.InitializeRepositories();
-builder.Services.InitializeServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

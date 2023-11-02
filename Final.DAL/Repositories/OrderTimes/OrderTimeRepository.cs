@@ -10,10 +10,11 @@ public class OrderTimeRepository : IBaseRepository<OrderTime>
     {
         _db = db;
     }
-    public async Task Create(OrderTime entity)
+    public async Task<bool> Create(OrderTime entity)
     {
         await _db.OrderTimes.AddAsync(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public IQueryable<OrderTime> GetAll()
@@ -21,10 +22,11 @@ public class OrderTimeRepository : IBaseRepository<OrderTime>
         return _db.OrderTimes;
     }
 
-    public async Task Delete(OrderTime entity)
+    public async Task<bool> Delete(OrderTime entity)
     {
         _db.OrderTimes.Remove(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public async Task<OrderTime> Update(OrderTime entity)

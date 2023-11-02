@@ -10,20 +10,22 @@ public class StadiumPhotosRepository : IBaseRepository<StadiumPhotos>
     {
         _db = db;
     }
-    public async Task Create(StadiumPhotos entity)
+    public async Task<bool> Create(StadiumPhotos entity)
     {
         await _db.StadiumPhotos.AddAsync(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public IQueryable<StadiumPhotos> GetAll()
     {
         return _db.StadiumPhotos;
     }
-    public async Task Delete(StadiumPhotos entity)
+    public async Task<bool> Delete(StadiumPhotos entity)
     {
         _db.StadiumPhotos.Remove(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public async Task<StadiumPhotos> Update(StadiumPhotos entity)

@@ -10,10 +10,11 @@ public class StadiumRepository : IBaseRepository<Stadium>
     {
         _db = db;
     }
-    public async Task Create(Stadium entity)
+    public async Task<bool> Create(Stadium entity)
     {
         await _db.Stadiums.AddAsync(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public IQueryable<Stadium> GetAll()
@@ -21,10 +22,11 @@ public class StadiumRepository : IBaseRepository<Stadium>
         return _db.Stadiums;
     }
 
-    public async Task Delete(Stadium entity)
+    public async Task<bool> Delete(Stadium entity)
     {
         _db.Stadiums.Remove(entity);
         await _db.SaveChangesAsync();
+        return true;
     }
 
     public async Task<Stadium> Update(Stadium entity)

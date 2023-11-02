@@ -1,12 +1,13 @@
-﻿using Final.BLL.Services.Orders;
+﻿using Final.BLL.Services.Accounts;
+using Final.BLL.Services.Orders;
 using Final.BLL.Services.OrderTimes;
 using Final.BLL.Services.Stadiums;
-using Final.BLL.Services.Users;
 using Final.DAL.Repositories;
 using Final.DAL.Repositories.Orders;
 using Final.DAL.Repositories.OrderTimes;
 using Final.DAL.Repositories.StadiumPhoto;
 using Final.DAL.Repositories.Stadiums;
+using Final.DAL.Repositories.Users;
 using Final.Domain.Entity;
 
 namespace final;
@@ -18,6 +19,7 @@ public static class Initializer
         services.AddScoped<IBaseRepository<OrderTime>, OrderTimeRepository>();
         services.AddScoped<IBaseRepository<Order>, OrderRepository>();
         services.AddScoped<IBaseRepository<StadiumPhotos>, StadiumPhotosRepository>();
+        services.AddScoped<IBaseRepository<User>, UserRepository>();
     }
 
     public static void InitializeServices(this IServiceCollection services)
@@ -25,6 +27,7 @@ public static class Initializer
         services.AddScoped<IStadiumService, StadiumService>();
         services.AddScoped<IOrderTimeService, OrderTimeService>();
         services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IAccounServices, AccountServices>();
 
     }
 }
