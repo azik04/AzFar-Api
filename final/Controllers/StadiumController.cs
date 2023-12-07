@@ -18,8 +18,8 @@ namespace final.Controllers
         {
             _stadiumService = stadiumService;
         }
-        [Authorize]
         [HttpGet]
+        [Route("GetStadiums")]
         public IActionResult GetStadiums()
         {
             var response = _stadiumService.GetStadiums();
@@ -50,16 +50,18 @@ namespace final.Controllers
             return BadRequest($"{response.Description}");
         }
         [HttpPost]
-        public async Task<IActionResult> Create(StadiumViewModel viewModel, IFormFile StadiumPhoto)
+        public async Task<IActionResult> Create(StadiumViewModel viewModel, IFormFile stadiumPhoto)
         {
-            ModelState.Remove("Id");
+            var response = await _stadiumService.CreateStadium(viewModel, stadiumPhoto);
 
-            if (viewModel.Id == 0)
+            if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
             {
-                await _stadiumService.CreateStadium(viewModel, StadiumPhoto);
+                return Ok(response);
             }
-
-            return Ok();
+            else
+            {
+                return BadRequest(response);
+            }
         }
     }
 }

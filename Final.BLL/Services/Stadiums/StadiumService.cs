@@ -5,6 +5,7 @@ using Final.Domain.Enum;
 using Final.Domain.Response;
 using Final.Domain.ViewModel.Stadiums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Stadiums;
@@ -48,43 +49,73 @@ public class StadiumService : IStadiumService
         } 
     }
 
-        public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, IFormFile StadiumPhoto)
+    public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, IFormFile stadiumPhoto)
+    {
+        try
         {
+            if (model == null || stadiumPhoto == null || stadiumPhoto.Length == 0)
+            {
+                return new BaseResponse<Stadium>()
+                {
+                    Description = "Invalid input parameters",
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+
+            var stadium = new Stadium()
+            {
+                Name = model.Name,
+                Adress = model.Adress,
+            };
+
+            await _stadiumRepository.Create(stadium);
+
+            var saveFilePath = Path.Combine("c:\\t\\", Guid.NewGuid().ToString() + Path.GetExtension(stadiumPhoto.FileName));
+
+            // File handling
             try
             {
-                var Stadium = new Stadium()
+                using (var stream = new FileStream(saveFilePath, FileMode.Create))
                 {
-                    Name = model.Name,
-                    Adress = model.Adress,
-                };
-                await _stadiumRepository.Create(Stadium);
-
-                var StadiumPphoto = new StadiumPhotos()
-                {
-                    StadiumId = model.Id,
-                    PhotoPath = StadiumPhoto.FileName
-                };
-                await _stadiumPhotosRepository.Create(StadiumPphoto);
-                string fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + Path.GetExtension(StadiumPhoto.FileName);
-                using (Stream stream = new FileStream("wwwroot/Files/" + fileName, FileMode.Create))
-                {
-                    StadiumPhoto.CopyTo(stream);
+                    await stadiumPhoto.CopyToAsync(stream);
                 }
-            return new BaseResponse<Stadium>()
-                {
-                    StatusCode = StatusCode.OK,
-                    Data = Stadium
-                };
             }
             catch (Exception ex)
             {
                 return new BaseResponse<Stadium>()
                 {
-                    Description = $"[CreateStadium] : {ex.Message}",
+                    Description = $"Error saving stadium photo: {ex.Message}",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
+
+            var stadiumPhotoEntity = new StadiumPhotos()
+            {
+                StadiumId = stadium.Id,
+                PhotoPath = Guid.NewGuid().ToString() + Path.GetExtension(stadiumPhoto.FileName)
+            };
+
+            await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
+
+            return new BaseResponse<Stadium>()
+            {
+                StatusCode = StatusCode.OK,
+                Data = stadium
+            };
         }
+        catch (Exception ex)
+        {
+            return new BaseResponse<Stadium>()
+            {
+                Description = $"[CreateStadium] : {ex.Message}",
+                StatusCode = StatusCode.InternalServerError
+            };
+        }
+    }
+
+    
+
+
 
     public async Task<IBaseResponse<bool>> DeleteStadium(long id)
     {

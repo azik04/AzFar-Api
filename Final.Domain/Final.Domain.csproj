@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Upload\Files\" />
+    <Folder Include="ViewModel\Новая папка\" />
   </ItemGroup>
 
 </Project>
