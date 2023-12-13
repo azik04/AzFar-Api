@@ -1,17 +1,21 @@
-﻿using Final.DAL.Repositories;
+﻿using Final.BLL.Services.Stadiums;
+using Final.DAL.Repositories;
 using Final.DAL.Repositories.Stadiums;
 using Final.Domain.Entity;
 using Final.Domain.Enum;
 using Final.Domain.Response;
+using Final.Domain.ViewModel.Orders;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Orders;
 public class OrderService : IOrderService
 {
     private readonly IBaseRepository<Order> _orderRepository;
-    public OrderService(IBaseRepository<Order> orderRepository)
+    private readonly IStadiumService _stadiumService;
+    public OrderService(IBaseRepository<Order> orderRepository, IStadiumService stadiumService)
     {
         _orderRepository = orderRepository;
+        _stadiumService = stadiumService;
     }
 
     public async Task<IBaseResponse<Order>> Create(Order model)
@@ -44,20 +48,36 @@ public class OrderService : IOrderService
         }
     }
 
-    public IBaseResponse<List<Order>> GetOrders()
+    public IBaseResponse<List<OrderVM>> GetOrders()
     {
         try
         {
-            var order = _orderRepository.GetAll().ToList();
-            return new BaseResponse<List<Order>>()
+            List<OrderVM> fOrders = new List<OrderVM>();
+            var orders = _orderRepository.GetAll().ToList();
+
+            for (int i = 0; i < orders.Count; i++)
             {
-                Data = order,
+                var stadiumName = _stadiumService.GetStadium(orders[i].StadiumId).Result.Data.Name;
+                var newOrd = new OrderVM
+                {
+                    Id = orders[i].Id,
+                    StadiumId = stadiumName,
+                    DateCreated = DateTime.Now,
+                    OrderTimeId= orders[i].OrderTimeId,
+                    FullName = orders[i].FullName,
+                };
+                fOrders.Add(newOrd);
+            }
+            
+            return new BaseResponse<List<OrderVM>>()
+            {
+                Data = fOrders,
                 StatusCode = StatusCode.OK
             };
         }
         catch (Exception ex)
         {
-            return new BaseResponse<List<Order>>()
+            return new BaseResponse<List<OrderVM>>()
             {
                 Description = $"[GetOrders] : {ex.Message}",
                 StatusCode = StatusCode.InternalServerError

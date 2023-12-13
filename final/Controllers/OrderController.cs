@@ -14,6 +14,7 @@ public class OrderController : ControllerBase
     {
         _orderService = orderService;
     }
+
     [HttpGet]
     public IActionResult GetOrders()
     {
@@ -22,17 +23,17 @@ public class OrderController : ControllerBase
         {
             return Ok(response.Data);
         }
-            return BadRequest($"{response.Description}");
-}
+        return BadRequest($"{response.Description}");
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateOrder(Order model)
     {
-            var response = await _orderService.Create(model);
-            if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
-            {
-                return Ok(new { description = response.Description });
-            }
-            return BadRequest($"{response.Description}");
+        var response = await _orderService.Create(model);
+        if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+        {
+            return Ok(new { description = response.Description });
+        }
+        return BadRequest($"{response.Description}");
     }
 }
