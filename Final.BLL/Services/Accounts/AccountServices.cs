@@ -8,6 +8,7 @@ using Final.Domain.ViewModel.Account;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Final.BLL.Services.Accounts;
 
@@ -107,19 +108,18 @@ public class AccountServices : IAccounServices
             {
                 return new BaseResponse<ClaimsIdentity>()
                 {
-                    Description = "There is already a user with this UserName",
+                    Description = "Пользователь с таким логином уже есть",
                 };
             }
 
             user = new User()
             {
                 Username = model.Username,
+                Role = Role.User,
                 PasswordHash = HashPasswordHelper.HashPassowrd(model.Password),
-                Phone = model.Phone
             };
 
             await _userRepository.Create(user);
-
             var result = Authenticate(user);
 
             return new BaseResponse<ClaimsIdentity>()
@@ -137,7 +137,7 @@ public class AccountServices : IAccounServices
                 Description = ex.Message,
                 StatusCode = StatusCode.InternalServerError
             };
-        }    
+        }
     }
     private ClaimsIdentity Authenticate(User user)
     {

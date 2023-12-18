@@ -7,7 +7,7 @@ public class OrderVM
 {
     public long Id { get; set; }
     public string StadiumId { get; set; }
-    public long? OrderTimeId { get; set; }
+    public string OrderTimeId { get; set; }
 
     [Display(Name = "Дата создания")]
     public DateTime DateCreated { get; set; }

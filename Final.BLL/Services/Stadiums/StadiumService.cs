@@ -6,6 +6,7 @@ using Final.Domain.Response;
 using Final.Domain.ViewModel.Stadiums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Stadiums;
@@ -24,13 +25,17 @@ public class StadiumService : IStadiumService
         try
         {
             var stadium =  _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
-            var img = _stadiumPhotosRepository.GetAll().ToList().Where(x => x.StadiumId == id);
+            var firstPhotoPath = _stadiumPhotosRepository
+            .GetAll()
+            .Where(x => x.StadiumId == id)
+            .Select(x => x.StadiumPhoto)
+            .FirstOrDefault();
 
             var data = new StadiumViewModel()
             {
                 Adress = stadium.Adress,
                 Name = stadium.Name,
-                StadiumPhotos = img.ToList()
+                StadiumPhoto = new List<IFormFile>()
             };
 
             return new BaseResponse<StadiumViewModel>()
@@ -53,15 +58,6 @@ public class StadiumService : IStadiumService
     {
         try
         {
-            if (model == null || stadiumPhoto == null || stadiumPhoto.Length == 0)
-            {
-                return new BaseResponse<Stadium>()
-                {
-                    Description = "Invalid input parameters",
-                    StatusCode = StatusCode.InternalServerError
-                };
-            }
-
             var stadium = new Stadium()
             {
                 Name = model.Name,
@@ -72,30 +68,18 @@ public class StadiumService : IStadiumService
 
             var saveFilePath = Path.Combine("c:\\t\\", Guid.NewGuid().ToString() + Path.GetExtension(stadiumPhoto.FileName));
 
-            // File handling
-            try
-            {
-                using (var stream = new FileStream(saveFilePath, FileMode.Create))
-                {
-                    await stadiumPhoto.CopyToAsync(stream);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<Stadium>()
-                {
-                    Description = $"Error saving stadium photo: {ex.Message}",
-                    StatusCode = StatusCode.InternalServerError
-                };
-            }
-
             var stadiumPhotoEntity = new StadiumPhotos()
             {
                 StadiumId = stadium.Id,
-                PhotoPath = Guid.NewGuid().ToString() + Path.GetExtension(stadiumPhoto.FileName)
+                StadiumPhoto = Path.GetFileName(saveFilePath)
             };
 
             await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
+
+            using (var stream = new FileStream(saveFilePath, FileMode.Create))
+            {
+                await stadiumPhoto.CopyToAsync(stream);
+            }
 
             return new BaseResponse<Stadium>()
             {
@@ -113,7 +97,6 @@ public class StadiumService : IStadiumService
         }
     }
 
-    
 
 
 
@@ -151,8 +134,7 @@ public class StadiumService : IStadiumService
             var stadium = _stadiumRepository.GetAll().ToList();
             foreach (var item in stadium)
             {
-                var img = _stadiumPhotosRepository.GetAll().ToList().Where(x => x.StadiumId == item.Id);
-                item.Img = img.ToList();
+                var photos = _stadiumPhotosRepository.GetAll().Where(x => x.StadiumId == item.Id).ToList();
             }
             return new BaseResponse<List<Stadium>>()
             {

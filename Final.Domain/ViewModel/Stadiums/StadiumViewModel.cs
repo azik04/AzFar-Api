@@ -1,11 +1,11 @@
 ﻿using Final.Domain.Entity;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Final.Domain.ViewModel.Stadiums
 {
     public class StadiumViewModel
     {
-        public long Id { get; set; }
 
         [Display(Name = "Название")]
         [Required(ErrorMessage = "Введите имя")]
@@ -15,7 +15,6 @@ namespace Final.Domain.ViewModel.Stadiums
         [Display(Name = "Адресс")]
         [MinLength(5, ErrorMessage = "Минимальная длина должна быть больше 50 символов")]
         public string? Adress { get; set; }
-
-        public List<StadiumPhotos>? StadiumPhotos { get; set; }
+        public List<IFormFile> StadiumPhoto { get; set; }
     }
 }

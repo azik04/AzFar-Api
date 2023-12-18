@@ -17,15 +17,22 @@ namespace final.Controllers
         {
             _accountService = accountService;
         }
-        [HttpPost("api/register")] // Specify the route for the API endpoint
+        [HttpPost("api/register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var response = await _accountService.Register(model);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(response.Data));
+            if (ModelState.IsValid)
+            {
+                var response = await _accountService.Register(model);
+                if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+                {
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(response.Data));
 
-            return Ok();
-            
+                    return Ok();
+                }
+                ModelState.AddModelError("", response.Description);
+            }
+            return BadRequest();
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)

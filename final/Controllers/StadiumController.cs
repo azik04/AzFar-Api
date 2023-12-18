@@ -50,9 +50,9 @@ namespace final.Controllers
             return BadRequest($"{response.Description}");
         }
         [HttpPost]
-        public async Task<IActionResult> Create(StadiumViewModel viewModel, IFormFile stadiumPhoto)
+        public async Task<IActionResult> Create([FromForm] StadiumViewModel viewModel)
         {
-            var response = await _stadiumService.CreateStadium(viewModel, stadiumPhoto);
+            var response = await _stadiumService.CreateStadium(viewModel);
 
             if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
             {

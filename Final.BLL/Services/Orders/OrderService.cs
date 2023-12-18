@@ -1,4 +1,5 @@
-﻿using Final.BLL.Services.Stadiums;
+﻿using Final.BLL.Services.OrderTimes;
+using Final.BLL.Services.Stadiums;
 using Final.DAL.Repositories;
 using Final.DAL.Repositories.Stadiums;
 using Final.Domain.Entity;
@@ -12,10 +13,12 @@ public class OrderService : IOrderService
 {
     private readonly IBaseRepository<Order> _orderRepository;
     private readonly IStadiumService _stadiumService;
-    public OrderService(IBaseRepository<Order> orderRepository, IStadiumService stadiumService)
+    private readonly IOrderTimeService _orderTimeService;
+    public OrderService(IBaseRepository<Order> orderRepository, IStadiumService stadiumService, IOrderTimeService orderTimeService)
     {
         _orderRepository = orderRepository;
         _stadiumService = stadiumService;
+        _orderTimeService = orderTimeService;
     }
 
     public async Task<IBaseResponse<Order>> Create(Order model)
@@ -58,12 +61,13 @@ public class OrderService : IOrderService
             for (int i = 0; i < orders.Count; i++)
             {
                 var stadiumName = _stadiumService.GetStadium(orders[i].StadiumId).Result.Data.Name;
+                //var orderTime = _orderTimeService.GetTime(orders[i].OrderTimeId).Result.Data.Name;
                 var newOrd = new OrderVM
                 {
                     Id = orders[i].Id,
                     StadiumId = stadiumName,
                     DateCreated = DateTime.Now,
-                    OrderTimeId= orders[i].OrderTimeId,
+                    //OrderTimeId= orderTime,
                     FullName = orders[i].FullName,
                 };
                 fOrders.Add(newOrd);
