@@ -54,7 +54,7 @@ public class StadiumService : IStadiumService
         } 
     }
 
-    public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, IFormFile stadiumPhoto)
+    public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model)
     {
         try
         {
@@ -66,20 +66,29 @@ public class StadiumService : IStadiumService
 
             await _stadiumRepository.Create(stadium);
 
-            var saveFilePath = Path.Combine("c:\\t\\", Guid.NewGuid().ToString() + Path.GetExtension(stadiumPhoto.FileName));
 
-            var stadiumPhotoEntity = new StadiumPhotos()
+
+
+            foreach (var item in model.StadiumPhoto)
             {
-                StadiumId = stadium.Id,
-                StadiumPhoto = Path.GetFileName(saveFilePath)
-            };
+                var saveFilePath = Path.Combine("c:\\t\\", Guid.NewGuid().ToString() + Path.GetExtension(item.FileName));
 
-            await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
+                var stadiumPhotoEntity = new StadiumPhotos()
+                {
+                    StadiumId = stadium.Id,
+                    StadiumPhoto = Path.GetFileName(saveFilePath)
+                };
 
-            using (var stream = new FileStream(saveFilePath, FileMode.Create))
-            {
-                await stadiumPhoto.CopyToAsync(stream);
+                await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
+
+
+                using (var stream = new FileStream(saveFilePath, FileMode.Create))
+                {
+                    await item.CopyToAsync(stream);
+                }
             }
+
+            
 
             return new BaseResponse<Stadium>()
             {

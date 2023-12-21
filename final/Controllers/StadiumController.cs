@@ -50,6 +50,7 @@ namespace final.Controllers
             return BadRequest($"{response.Description}");
         }
         [HttpPost]
+        [Route("CreateStadium")]
         public async Task<IActionResult> Create([FromForm] StadiumViewModel viewModel)
         {
             var response = await _stadiumService.CreateStadium(viewModel);

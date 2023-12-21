@@ -9,6 +9,6 @@ public interface IStadiumService
 {
     IBaseResponse<List<Stadium>> GetStadiums();
     Task<IBaseResponse<StadiumViewModel>> GetStadium(long id);
-    Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model, IFormFile StadiumPhoto);
+    Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model);
     Task<IBaseResponse<bool>> DeleteStadium(long id);
 }
