@@ -2,7 +2,7 @@
 
 namespace Final.DAL.Repositories.Users;
 
-public class UserRepository : IBaseRepository<User>
+public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _db;
 
@@ -10,32 +10,36 @@ public class UserRepository : IBaseRepository<User>
     {
         _db = db;
     }
-    public async Task<bool> Create(User entity)
+
+    public User GetByPhone(int phone)
+    {
+        return _db.Users.FirstOrDefault(u => u.Phone == phone);
+    }
+
+    public User GetById(int id)
+    {
+        return _db.Users.FirstOrDefault(u => u.Id == id);
+    }
+
+    async Task<bool> IBaseRepository<User>.Create(User entity)
     {
         await _db.Users.AddAsync(entity);
         await _db.SaveChangesAsync();
-
-        return true;
-    }
-
-    public async Task<bool> Delete(User entity)
-    {
-        _db.Users.Remove(entity);
-        await _db.SaveChangesAsync();
-
         return true;
     }
 
     public IQueryable<User> GetAll()
     {
-        return _db.Users;
+        throw new NotImplementedException();
     }
 
-    public async Task<User> Update(User entity)
+    public Task<bool> Delete(User entity)
     {
-        _db.Users.Update(entity);
-        await _db.SaveChangesAsync();
+        throw new NotImplementedException();
+    }
 
-        return entity;
+    public Task<User> Update(User entity)
+    {
+        throw new NotImplementedException();
     }
 }

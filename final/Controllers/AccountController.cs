@@ -1,10 +1,8 @@
-﻿using Final.BLL.Services.Accounts;
-using Final.Domain.ViewModel.Account;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using Final.Domain.ViewModel.Account;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Final.DAL.Repositories.Users;
+using Final.Domain.Entity;
+using Final.Domain.Helpers;
 
 namespace final.Controllers
 {
@@ -12,35 +10,84 @@ namespace final.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccounServices _accountService;
-        public AccountController(IAccounServices accountService)
-        {
-            _accountService = accountService;
-        }
-        [HttpPost("api/register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var response = await _accountService.Register(model);
-                if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
-                {
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(response.Data));
+        private readonly IUserRepository _repository;
+        private readonly JwtService _jwtService;
 
-                    return Ok();
-                }
-                ModelState.AddModelError("", response.Description);
-            }
-            return BadRequest();
-        }
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public AccountController(IUserRepository repository, JwtService jwtService)
         {
-                var response = await _accountService.Login(model);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(response.Data));
-                return Ok();
+            _repository = repository;
+            _jwtService = jwtService;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterViewModel vm)
+            
+        {
+            var user = new User
+            {
+                Name = vm.Name,
+                Phone = vm.Phone,
+                Password = BCrypt.Net.BCrypt.HashPassword(vm.Password)
+            };
+            await _repository.Create(user);
+            return Ok(vm);
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login(LoginViewModel vm)
+        {
+            var user = _repository.GetByPhone(vm.Phone);
+
+            if (user == null) return BadRequest(new { message = "Invalid Credentials" });
+
+            if (!BCrypt.Net.BCrypt.Verify(vm.Password, user.Password))
+            {
+                return BadRequest(new { message = "Invalid Credentials" });
+            }
+
+            var jwt = _jwtService.Generate(user.Id);
+
+            Response.Cookies.Append("jwt", jwt, new CookieOptions
+            {
+                HttpOnly = true
+            });
+
+            return Ok(new
+            {
+                message = "success"
+            });
+        }
+
+        [HttpGet("user")]
+        public IActionResult User()
+        {
+            try
+            {
+                var jwt = Request.Cookies["jwt"];
+
+                var token = _jwtService.Verify(jwt);
+
+                int userId = int.Parse(token.Issuer);
+
+                var user = _repository.GetById(userId);
+
+                return Ok(user);
+            }
+            catch (Exception)
+            {
+                return Unauthorized();
+            }
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+
+            return Ok(new
+            {
+                message = "success"
+            });
         }
     }
 }

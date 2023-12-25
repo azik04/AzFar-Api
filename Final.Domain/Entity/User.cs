@@ -1,12 +1,14 @@
 ﻿using Automarket.Domain.Enum;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Final.Domain.Entity;
 
 public class User
 {
-    public long id { get; set; }
-    public string? Username { get; set; } = string.Empty;
-    public string? PasswordHash { get; set; } = string.Empty;
-    public string? Phone { get; set; } = string.Empty;
-    public Role? Role { get; set; }
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Phone { get; set; }
+    [JsonIgnore] public string Password { get; set; }
 }

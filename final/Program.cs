@@ -15,12 +15,6 @@ builder.Services.AddControllers();
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connection));
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-        options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
-    });
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 builder.Services.AddEndpointsApiExplorer();
@@ -39,17 +33,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
-builder.Services.AddAuthentication().AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateAudience = false,
-        ValidateIssuer = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                builder.Configuration.GetSection("AppSettings:Token").Value!))
-    };
-});
+//builder.Services.AddAuthentication()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,7 +48,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors();
 app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
