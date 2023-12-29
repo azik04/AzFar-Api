@@ -13,7 +13,7 @@ namespace final.Controllers
     public class StadiumController : ControllerBase
     {
         private readonly IStadiumService _stadiumService;
-
+        
         public StadiumController(IStadiumService stadiumService)
         {
             _stadiumService = stadiumService;

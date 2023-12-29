@@ -64,12 +64,9 @@ namespace final.Controllers
             try
             {
                 var jwt = Request.Cookies["jwt"];
-
                 var token = _jwtService.Verify(jwt);
-
                 int userId = int.Parse(token.Issuer);
-
-                var user = _repository.GetById(userId);
+                var user = _repository.GetById(userId).Result;
 
                 return Ok(user);
             }

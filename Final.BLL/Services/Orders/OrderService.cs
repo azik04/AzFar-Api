@@ -2,6 +2,7 @@
 using Final.BLL.Services.Stadiums;
 using Final.DAL.Repositories;
 using Final.DAL.Repositories.Stadiums;
+using Final.DAL.Repositories.Users;
 using Final.Domain.Entity;
 using Final.Domain.Enum;
 using Final.Domain.Response;
@@ -14,11 +15,13 @@ public class OrderService : IOrderService
     private readonly IBaseRepository<Order> _orderRepository;
     private readonly IStadiumService _stadiumService;
     private readonly IOrderTimeService _orderTimeService;
-    public OrderService(IBaseRepository<Order> orderRepository, IStadiumService stadiumService, IOrderTimeService orderTimeService)
+    private readonly IUserRepository _userRepository;
+    public OrderService(IBaseRepository<Order> orderRepository, IStadiumService stadiumService, IOrderTimeService orderTimeService, IUserRepository userRepository)
     {
         _orderRepository = orderRepository;
         _stadiumService = stadiumService;
         _orderTimeService = orderTimeService;
+        _userRepository = userRepository;
     }
 
     public async Task<IBaseResponse<Order>> Create(Order model)
@@ -27,10 +30,11 @@ public class OrderService : IOrderService
         {
             var order = new Order()
             {
+                Id = model.Id,
                 FullName = model.FullName,
                 StadiumId = model.StadiumId,
-                DateCreated = DateTime.Now,
                 OrderTimeId = model.OrderTimeId,
+                DateCreated = DateTime.Now
             };
 
             await _orderRepository.Create(order);
@@ -57,18 +61,18 @@ public class OrderService : IOrderService
         {
             List<OrderVM> fOrders = new List<OrderVM>();
             var orders = _orderRepository.GetAll().ToList();
-
+            
             for (int i = 0; i < orders.Count; i++)
             {
                 var stadiumName = _stadiumService.GetStadium(orders[i].StadiumId).Result.Data.Name;
-                //var orderTime = _orderTimeService.GetTime(orders[i].OrderTimeId).Result.Data.Name;
+                var userName= _userRepository.GetById(orders[i].FullName).Result.Name;
+                var orderTime = _orderTimeService.GetTime(orders[i].OrderTimeId).Result.Data.OrderTimes;
                 var newOrd = new OrderVM
                 {
-                    Id = orders[i].Id,
                     StadiumId = stadiumName,
                     DateCreated = DateTime.Now,
-                    //OrderTimeId= orderTime,
-                    FullName = orders[i].FullName,
+                    OrderTimeId= orderTime,
+                    FullName = userName,
                 };
                 fOrders.Add(newOrd);
             }

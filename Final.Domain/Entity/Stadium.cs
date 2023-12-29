@@ -13,4 +13,5 @@ public class Stadium
 
 
     public string? Adress { get; set; }
+    public List<StadiumPhotos> StadiumPhoto { get; set; }
 }

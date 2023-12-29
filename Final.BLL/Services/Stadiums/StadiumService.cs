@@ -143,7 +143,7 @@ public class StadiumService : IStadiumService
             var stadium = _stadiumRepository.GetAll().ToList();
             foreach (var item in stadium)
             {
-                var photos = _stadiumPhotosRepository.GetAll().Where(x => x.StadiumId == item.Id).ToList();
+                item.StadiumPhoto = _stadiumPhotosRepository.GetAll().Where(x => x.StadiumId == item.Id).ToList();
             }
             return new BaseResponse<List<Stadium>>()
             {

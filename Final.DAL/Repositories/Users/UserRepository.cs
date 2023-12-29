@@ -1,4 +1,5 @@
 ﻿using Final.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Final.DAL.Repositories.Users;
 
@@ -16,10 +17,9 @@ public class UserRepository : IUserRepository
         return _db.Users.FirstOrDefault(u => u.Phone == phone);
     }
 
-    public User GetById(int id)
-    {
-        return _db.Users.FirstOrDefault(u => u.Id == id);
-    }
+    public async Task<User> GetById(int id) =>
+        await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+
 
     async Task<bool> IBaseRepository<User>.Create(User entity)
     {
@@ -30,7 +30,7 @@ public class UserRepository : IUserRepository
 
     public IQueryable<User> GetAll()
     {
-        throw new NotImplementedException();
+        return _db.Users;
     }
 
     public Task<bool> Delete(User entity)
