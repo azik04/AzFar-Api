@@ -1,9 +1,11 @@
 ﻿using Final.BLL.Services.Orders;
 using Final.BLL.Services.OrderTimes;
+using Final.BLL.Services.Roles;
 using Final.BLL.Services.Stadiums;
 using Final.DAL.Repositories;
 using Final.DAL.Repositories.Orders;
 using Final.DAL.Repositories.OrderTimes;
+using Final.DAL.Repositories.Roles;
 using Final.DAL.Repositories.StadiumPhoto;
 using Final.DAL.Repositories.Stadiums;
 using Final.DAL.Repositories.Users;
@@ -21,6 +23,7 @@ public static class Initializer
         services.AddScoped<IBaseRepository<StadiumPhotos>, StadiumPhotosRepository>();
         //.AddScoped<IBaseRepository<User>, UserRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IBaseRepository<Role>, RoleRepository>();
     }
 
     public static void InitializeServices(this IServiceCollection services)
@@ -29,6 +32,7 @@ public static class Initializer
         services.AddScoped<IOrderTimeService, OrderTimeService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<JwtService>();
+        services.AddScoped<IRoleService, RoleService>();
 
     }
 }

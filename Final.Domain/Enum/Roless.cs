@@ -2,7 +2,7 @@
 
 namespace Automarket.Domain.Enum;
 
-public enum Role
+public enum Roless
 {
     [Display(Name = "Пользователь")]
     User = 0,

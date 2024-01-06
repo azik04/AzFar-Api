@@ -25,7 +25,20 @@ public class OrderController : ControllerBase
         }
         return BadRequest($"{response.Description}");
     }
-
+    [HttpGet]
+    [Route("GetOrder")]
+    public async Task<IActionResult> GetOrder(int id)
+    {
+        var response = await _orderService.GetOrder(id);
+        if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+        {
+            return Ok(response.Data);
+        }
+        else
+        {
+            return NotFound(response.Description);
+        }
+    }
     [HttpPost]
     public async Task<IActionResult> CreateOrder(Order model)
     {

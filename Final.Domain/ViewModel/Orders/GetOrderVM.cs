@@ -1,14 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
+﻿using Final.Domain.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace Final.Domain.ViewModel.Orders;
 
-public class OrderVM
+public class GetOrderVM
 {
     public long Id { get; set; }
     public string StadiumId { get; set; }
     public string OrderTimeId { get; set; }
     public DateTime DateCreated { get; set; }
     public string FullName { get; set; }
+    public string StadiumAdress { get; set; }
+    public List<IFormFile> StadiumPhoto { get; set; }
 
 }

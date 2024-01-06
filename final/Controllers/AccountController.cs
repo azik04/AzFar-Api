@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Final.DAL.Repositories.Users;
 using Final.Domain.Entity;
 using Final.Domain.Helpers;
+using Final.DAL.Repositories;
 
 namespace final.Controllers
 {
@@ -12,11 +13,13 @@ namespace final.Controllers
     {
         private readonly IUserRepository _repository;
         private readonly JwtService _jwtService;
+        private readonly IBaseRepository<Role> _role;
 
-        public AccountController(IUserRepository repository, JwtService jwtService)
+        public AccountController(IUserRepository repository, JwtService jwtService, IBaseRepository<Role> role)
         {
             _repository = repository;
             _jwtService = jwtService;
+            _role = role;
         }
 
         [HttpPost("register")]
@@ -27,7 +30,8 @@ namespace final.Controllers
             {
                 Name = vm.Name,
                 Phone = vm.Phone,
-                Password = BCrypt.Net.BCrypt.HashPassword(vm.Password)
+                Password = BCrypt.Net.BCrypt.HashPassword(vm.Password),
+                RoleId = 1 
             };
             await _repository.Create(user);
             return Ok(vm);

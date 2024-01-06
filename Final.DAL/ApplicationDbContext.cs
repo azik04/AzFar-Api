@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Stadium> Stadiums { get; set; }
     public DbSet<StadiumPhotos> StadiumPhotos { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
 
 
     //protected override void OnModelCreating(ModelBuilder modelBuilder)
