@@ -1,9 +1,5 @@
-﻿using Final.BLL.Services.OrderTimes;
-using Final.BLL.Services.Stadiums;
-using Final.Domain.Entity;
+﻿using Final.BLL.Services.Stadiums;
 using Final.Domain.ViewModel.Stadiums;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace final.Controllers

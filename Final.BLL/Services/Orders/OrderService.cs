@@ -35,6 +35,7 @@ public class OrderService : IOrderService
         {
             var order = new Order()
             {
+
                 Id = model.Id,
                 FullName = model.FullName,
                 StadiumId = model.StadiumId,

@@ -66,29 +66,28 @@ public class StadiumService : IStadiumService
 
             await _stadiumRepository.Create(stadium);
 
-
-
-
             foreach (var item in model.StadiumPhoto)
             {
-                var saveFilePath = Path.Combine("c:\\t\\", Guid.NewGuid().ToString() + Path.GetExtension(item.FileName));
-
-                var stadiumPhotoEntity = new StadiumPhotos()
+                var uploadDirectory = Path.Combine("wwwroot", "upload");
+                if (!Directory.Exists(uploadDirectory))
                 {
-                    StadiumId = stadium.Id,
-                    StadiumPhoto = Path.GetFileName(saveFilePath)
-                };
+                    Directory.CreateDirectory(uploadDirectory);
+                }
 
-                await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
-
-
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(item.FileName);
+                var saveFilePath = Path.Combine(uploadDirectory, fileName);
                 using (var stream = new FileStream(saveFilePath, FileMode.Create))
                 {
                     await item.CopyToAsync(stream);
                 }
-            }
+                var stadiumPhotoEntity = new StadiumPhotos()
+                {
+                    StadiumId = stadium.Id,
+                    StadiumPhoto = fileName
+                };
 
-            
+                await _stadiumPhotosRepository.Create(stadiumPhotoEntity);
+            }
 
             return new BaseResponse<Stadium>()
             {
@@ -105,8 +104,6 @@ public class StadiumService : IStadiumService
             };
         }
     }
-
-
 
 
     public async Task<IBaseResponse<bool>> DeleteStadium(long id)

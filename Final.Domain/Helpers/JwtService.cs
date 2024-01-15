@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Final.Domain.Helpers;
@@ -8,13 +9,18 @@ public class JwtService
 {
     private string secureKey = "9B028A3A-513D-4284-AB5B-DD03688B3DA4";
 
-    public string Generate(int id)
+    public string Generate(int id, int roleId)
     {
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secureKey));
         var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
         var header = new JwtHeader(credentials);
 
-        var payload = new JwtPayload(id.ToString(), null, null, null, DateTime.Today.AddDays(1)); // 1 day
+        List<Claim> claims = new List<Claim>()
+        {
+            new Claim(ClaimTypes.Role, roleId.ToString())
+        };
+
+        var payload = new JwtPayload(id.ToString(), null, claims, null, DateTime.Today.AddDays(1)); // 1 day
         var securityToken = new JwtSecurityToken(header, payload);
 
         return new JwtSecurityTokenHandler().WriteToken(securityToken);

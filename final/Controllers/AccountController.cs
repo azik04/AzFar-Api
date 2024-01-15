@@ -24,14 +24,14 @@ namespace final.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel vm)
-            
+
         {
             var user = new User
             {
                 Name = vm.Name,
                 Phone = vm.Phone,
                 Password = BCrypt.Net.BCrypt.HashPassword(vm.Password),
-                RoleId = 1 
+                RoleId = 1
             };
             await _repository.Create(user);
             return Ok(vm);
@@ -49,7 +49,7 @@ namespace final.Controllers
                 return BadRequest(new { message = "Invalid Credentials" });
             }
 
-            var jwt = _jwtService.Generate(user.Id);
+            var jwt = _jwtService.Generate(user.Id, user.RoleId);
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
             {
