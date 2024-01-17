@@ -20,25 +20,22 @@ public class StadiumService : IStadiumService
         _stadiumRepository = stadiumRepository;
         _stadiumPhotosRepository = stadiumPhotosRepository;
     }
-    public async Task<IBaseResponse<StadiumViewModel>> GetStadium(long id)
+    public async Task<IBaseResponse<GetStadiumViewModel>> GetStadium(long id)
     {
         try
         {
             var stadium =  _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
             var firstPhotoPath = _stadiumPhotosRepository
-            .GetAll()
-            .Where(x => x.StadiumId == id)
-            .Select(x => x.StadiumPhoto)
-            .FirstOrDefault();
+            .GetAll().FirstOrDefault(x => x.StadiumId == id).StadiumPhoto;
 
-            var data = new StadiumViewModel()
+            var data = new GetStadiumViewModel()
             {
                 Adress = stadium.Adress,
                 Name = stadium.Name,
-                StadiumPhoto = new List<IFormFile>()
+                StadiumPhotoName = firstPhotoPath
             };
 
-            return new BaseResponse<StadiumViewModel>()
+            return new BaseResponse<GetStadiumViewModel>()
             {
                 StatusCode = StatusCode.OK,
                 Data = data
@@ -46,7 +43,7 @@ public class StadiumService : IStadiumService
         }
         catch (Exception ex)
         {
-            return new BaseResponse<StadiumViewModel>()
+            return new BaseResponse<GetStadiumViewModel>()
             {
                 Description = $"[GetStadium] : {ex.Message}",
                 StatusCode = StatusCode.InternalServerError

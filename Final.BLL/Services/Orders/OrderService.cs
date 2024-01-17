@@ -116,15 +116,16 @@ public class OrderService : IOrderService
             var orderVMs = new List<GetOrderVM>();
             foreach (var order in orders)
             {
-                var stadiumName = _stadiumService.GetStadium(order.StadiumId).Result.Data.Name;
-                var stadiumAdress = _stadiumService.GetStadium(order.StadiumId).Result.Data.Adress;
-                var stadiumPhoto = _stadiumService.GetStadium(order.StadiumId).Result.Data.StadiumPhoto;
+                var stadium = _stadiumService.GetStadium(order.StadiumId).Result.Data;
+                var stadiumName = stadium.Name;
+                var stadiumAdress = stadium.Adress;
+                var stadiumPhoto = _stadiumService.GetStadium(order.StadiumId).Result.Data.StadiumPhotoName;
                 var userName = _userRepository.GetById(order.FullName).Result.Name;
                 var orderTime = _orderTimeService.GetTime(order.OrderTimeId).Result.Data.OrderTimes;
 
                 var newOrd = new GetOrderVM
                 {
-                    StadiumId = stadiumName,
+                    StadiumId = stadium.Name,
                     DateCreated = order.DateCreated,
                     OrderTimeId = orderTime,
                     FullName = userName,

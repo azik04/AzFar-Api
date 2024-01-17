@@ -8,7 +8,7 @@ namespace Final.BLL.Services.Stadiums;
 public interface IStadiumService
 {
     IBaseResponse<List<Stadium>> GetStadiums();
-    Task<IBaseResponse<StadiumViewModel>> GetStadium(long id);
+    Task<IBaseResponse<GetStadiumViewModel>> GetStadium(long id);
     Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model);
     Task<IBaseResponse<bool>> DeleteStadium(long id);
 }

@@ -11,6 +11,6 @@ public class GetOrderVM
     public DateTime DateCreated { get; set; }
     public string FullName { get; set; }
     public string StadiumAdress { get; set; }
-    public List<IFormFile> StadiumPhoto { get; set; }
+    public string StadiumPhoto { get; set; }
 
 }
