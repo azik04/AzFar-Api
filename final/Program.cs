@@ -22,14 +22,20 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(option =>
     {
-        option.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        option
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
-
-
 });
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
-
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
@@ -49,8 +55,8 @@ app.UseRouting();
 app.UseCors();
 app.UseStaticFiles();
 app.UseAuthentication();
-//app.UseAuthorization();
-
+app.UseAuthorization();
+app.UseCookiePolicy();
 app.MapControllers();
 
 app.Run();

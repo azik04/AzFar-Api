@@ -4,6 +4,7 @@ using Final.DAL.Repositories.Users;
 using Final.Domain.Entity;
 using Final.Domain.Helpers;
 using Final.DAL.Repositories;
+using System.Security.Claims;
 
 namespace final.Controllers
 {
@@ -58,10 +59,10 @@ namespace final.Controllers
 
             return Ok(new
             {
-                message = "success"
+                message = "success",
+                token = jwt
             });
         }
-
         [HttpGet("user")]
         public IActionResult User()
         {
@@ -69,17 +70,23 @@ namespace final.Controllers
             {
                 var jwt = Request.Cookies["jwt"];
                 var token = _jwtService.Verify(jwt);
-                int userId = int.Parse(token.Issuer);
-                var user = _repository.GetById(userId).Result;
+                var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
 
-                return Ok(user);
+                var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
+
+                if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    var user = _repository.GetById(userId).Result;
+                    return Ok(user);
+                }
+
+                return Unauthorized();
             }
             catch (Exception)
             {
                 return Unauthorized();
             }
         }
-
         [HttpPost("logout")]
         public IActionResult Logout()
         {
