@@ -9,7 +9,7 @@ public class JwtService
 {
     private string secureKey = "9B028A3A-513D-4284-AB5B-DD03688B3DA4";
 
-    public string Generate(int id, int roleId)
+    public string Generate(int id, int roleId, string name)
     {
         var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secureKey));
         var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -17,7 +17,8 @@ public class JwtService
 
         List<Claim> claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Role, roleId.ToString())
+            new Claim(ClaimTypes.Role, roleId.ToString()),
+            new Claim(ClaimTypes.Role, name.ToString())
         };
 
         var payload = new JwtPayload(id.ToString(), null, claims, null, DateTime.Today.AddDays(1)); // 1 day

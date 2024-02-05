@@ -27,6 +27,10 @@ namespace final.Controllers
         public async Task<IActionResult> Register(RegisterViewModel vm)
 
         {
+            if (_repository.GetAll().FirstOrDefault(x => x.Phone == x.Phone)!=null)
+            {
+                return BadRequest("User with this Phone Number already exists.");
+            }
             var user = new User
             {
                 Name = vm.Name,
@@ -50,7 +54,7 @@ namespace final.Controllers
                 return BadRequest(new { message = "Invalid Credentials" });
             }
 
-            var jwt = _jwtService.Generate(user.Id, user.RoleId);
+            var jwt = _jwtService.Generate(user.Id, user.RoleId, user.Name);
 
             Response.Cookies.Append("jwt", jwt, new CookieOptions
             {

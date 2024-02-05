@@ -21,7 +21,6 @@ public static class Initializer
         services.AddScoped<IBaseRepository<OrderTime>, OrderTimeRepository>();
         services.AddScoped<IBaseRepository<Order>, OrderRepository>();
         services.AddScoped<IBaseRepository<StadiumPhotos>, StadiumPhotosRepository>();
-        //.AddScoped<IBaseRepository<User>, UserRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBaseRepository<Role>, RoleRepository>();
     }
@@ -35,4 +34,5 @@ public static class Initializer
         services.AddScoped<IRoleService, RoleService>();
 
     }
+
 }
