@@ -18,7 +18,7 @@ public class JwtService
         List<Claim> claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Role, roleId.ToString()),
-            new Claim(ClaimTypes.Role, name.ToString())
+            new Claim(ClaimTypes.Name, name.ToString())
         };
 
         var payload = new JwtPayload(id.ToString(), null, claims, null, DateTime.Today.AddDays(1)); // 1 day
@@ -26,7 +26,6 @@ public class JwtService
 
         return new JwtSecurityTokenHandler().WriteToken(securityToken);
     }
-
     public JwtSecurityToken Verify(string jwt)
     {
         var tokenHandler = new JwtSecurityTokenHandler();

@@ -27,10 +27,7 @@ namespace final.Controllers
         public async Task<IActionResult> Register(RegisterViewModel vm)
 
         {
-            if (_repository.GetAll().FirstOrDefault(x => x.Phone == x.Phone)!=null)
-            {
-                return BadRequest("User with this Phone Number already exists.");
-            }
+           
             var user = new User
             {
                 Name = vm.Name,
@@ -38,6 +35,20 @@ namespace final.Controllers
                 Password = BCrypt.Net.BCrypt.HashPassword(vm.Password),
                 RoleId = 1
             };
+            if (string.IsNullOrEmpty(vm.Name))
+            {
+                return BadRequest("Name can't be empty");
+            }
+            if (string.IsNullOrEmpty(user.Password))
+                return BadRequest("Password cant be empty");
+            if (user.Password.Length <= 6)
+            {
+                return BadRequest("Password should have more than 6 words");
+            }
+            if (_repository.GetAll().FirstOrDefault(x => x.Phone == x.Phone) != null)
+            {
+                return BadRequest("User with this Phone Number already exists.");
+            }
             await _repository.Create(user);
             return Ok(vm);
         }

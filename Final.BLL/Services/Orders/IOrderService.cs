@@ -9,4 +9,5 @@ public interface IOrderService
     Task<IBaseResponse<Order>> Create(Order model);
     IBaseResponse<List<OrderVM>> GetOrders();
     Task<IBaseResponse<List<GetOrderVM>>> GetOrder(long id);
+    Task<IBaseResponse<Order>> DelateOrder(long id);
 }

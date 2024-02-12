@@ -9,6 +9,8 @@ using Final.Domain.Enum;
 using Final.Domain.Response;
 using Final.Domain.ViewModel.Orders;
 using Final.Domain.ViewModel.Stadiums;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using static Final.Domain.Response.IBaseResponse;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -42,9 +44,18 @@ public class OrderService : IOrderService
                 OrderTimeId = model.OrderTimeId,
                 DateCreated = DateTime.Now
             };
+            if (order.FullName == 0)
+            {
+                return new BaseResponse<Order>()
+                {
+                    Description = "User isnt LogIn",
+                    StatusCode = StatusCode.UserNotFound
+                };
+            }
+
 
             await _orderRepository.Create(order);
-
+            
             return new BaseResponse<Order>()
             {
                 Description = "Заказ создан",
@@ -152,4 +163,27 @@ public class OrderService : IOrderService
         }
     }
 
+    public async Task<IBaseResponse<Order>> DelateOrder(long id)
+    {
+        try
+        {
+            var order = _orderRepository.GetAll().FirstOrDefault(x => x.Id == id);
+            await _orderRepository.Delete(order);
+            return new BaseResponse<Order>()
+            {
+                StatusCode = StatusCode.OK,
+                Description = ("Order has been delated")
+            };
+        }
+        catch (Exception ex) 
+        {
+            return new BaseResponse<Order>()
+            {
+                Description = $"[GetOrder] : {ex.Message}",
+                StatusCode = StatusCode.InternalServerError
+            };
+        }
+        
+
+    }
 }

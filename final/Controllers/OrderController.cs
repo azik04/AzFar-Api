@@ -40,6 +40,19 @@ public class OrderController : ControllerBase
             return NotFound(response.Description);
         }
     }
+    [HttpDelete]
+    public async Task<IActionResult> DelateOrder(long id)
+    {
+        var response = await _orderService.DelateOrder(id);
+        if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
+        {
+            return Ok(response.Description);
+        }
+        else
+        {
+            return NotFound(response.Description);
+        }
+    }
     [HttpPost]
     public async Task<IActionResult> CreateOrder(Order model)
     {
