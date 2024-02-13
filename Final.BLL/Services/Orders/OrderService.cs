@@ -90,6 +90,7 @@ public class OrderService : IOrderService
                     DateCreated = DateTime.Now,
                     OrderTimeId= orderTime,
                     FullName = userName,
+                    Id = orders[i].Id,
                 };
                 fOrders.Add(newOrd);
             }
@@ -162,28 +163,26 @@ public class OrderService : IOrderService
             };
         }
     }
-
-    public async Task<IBaseResponse<Order>> DelateOrder(long id)
+    public async Task<IBaseResponse<bool>> DeleteOrder(long id)
     {
         try
         {
             var order = _orderRepository.GetAll().FirstOrDefault(x => x.Id == id);
             await _orderRepository.Delete(order);
-            return new BaseResponse<Order>()
+            return new BaseResponse<bool>()
             {
                 StatusCode = StatusCode.OK,
-                Description = ("Order has been delated")
+                Description = ("Order has been delated"),
+                Data = true
             };
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
-            return new BaseResponse<Order>()
+            return new BaseResponse<bool>()
             {
                 Description = $"[GetOrder] : {ex.Message}",
                 StatusCode = StatusCode.InternalServerError
             };
         }
-        
-
     }
 }

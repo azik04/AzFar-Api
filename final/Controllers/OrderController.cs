@@ -43,7 +43,7 @@ public class OrderController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> DelateOrder(long id)
     {
-        var response = await _orderService.DelateOrder(id);
+        var response = await _orderService.DeleteOrder(id);
         if (response.StatusCode == Final.Domain.Enum.StatusCode.OK)
         {
             return Ok(response.Description);
