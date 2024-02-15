@@ -48,10 +48,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseResponseCaching();
 app.UseHttpsRedirection();
-
+app.UseStaticFiles();
 app.UseRouting();
 app.UseCors();
-app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

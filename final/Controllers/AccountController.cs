@@ -5,6 +5,7 @@ using Final.Domain.Entity;
 using Final.Domain.Helpers;
 using Final.DAL.Repositories;
 using System.Security.Claims;
+using System;
 
 namespace final.Controllers
 {
@@ -25,9 +26,12 @@ namespace final.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel vm)
-
         {
-           
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "TEST");
+            }
+
             var user = new User
             {
                 Name = vm.Name,
@@ -56,7 +60,21 @@ namespace final.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginViewModel vm)
         {
-            var user = _repository.GetByPhone(vm.Phone);
+            if (vm.Phone == "")
+            {
+                ModelState.AddModelError("", "Имя и пароль не должны совпадать");
+            }
+
+            if (!ModelState.IsValid)
+                return Ok(new { message = "UserBox can be emty" });
+            if (vm.Password == "")
+            {
+                ModelState.AddModelError("", "Имя и пароль не должны совпадать");
+            }
+            if (!ModelState.IsValid)
+                return Ok(new { message = "PasswordBox can be empty" });
+
+            var user = _repository.GetByPhone(Convert.ToInt32(vm.Phone));
 
             if (user == null) return BadRequest(new { message = "Invalid Credentials" });
 
@@ -79,6 +97,7 @@ namespace final.Controllers
             });
         }
         [HttpGet("user")]
+        
         public IActionResult User()
         {
             try

@@ -5,7 +5,8 @@ namespace Final.Domain.ViewModel.Account
 {
     public class LoginViewModel
     {
-        public int Phone { set; get; }
+        [Required(ErrorMessage = "Не указан номер")]
+        public string Phone { set; get; }
         public string Password { set; get; }
     }
 }
