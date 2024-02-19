@@ -5,7 +5,6 @@ using Final.Domain.Entity;
 using Final.Domain.Helpers;
 using Final.DAL.Repositories;
 using System.Security.Claims;
-using System;
 
 namespace final.Controllers
 {
@@ -39,19 +38,9 @@ namespace final.Controllers
                 Password = BCrypt.Net.BCrypt.HashPassword(vm.Password),
                 RoleId = 1
             };
-            if (string.IsNullOrEmpty(vm.Name))
+            if (_repository.GetAll().FirstOrDefault(x => x.Phone == x.Phone ) != null)
             {
-                return BadRequest("Name can't be empty");
-            }
-            if (string.IsNullOrEmpty(user.Password))
-                return BadRequest("Password cant be empty");
-            if (user.Password.Length <= 6)
-            {
-                return BadRequest("Password should have more than 6 words");
-            }
-            if (_repository.GetAll().FirstOrDefault(x => x.Phone == x.Phone) != null)
-            {
-                return BadRequest("User with this Phone Number already exists.");
+                return BadRequest(new { message = "User with Same number exists" });
             }
             await _repository.Create(user);
             return Ok(vm);
@@ -60,27 +49,18 @@ namespace final.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginViewModel vm)
         {
-            if (vm.Phone == "")
+            if (string.IsNullOrEmpty(vm.Phone) || string.IsNullOrEmpty(vm.Password))
             {
-                ModelState.AddModelError("", "Имя и пароль не должны совпадать");
+                ModelState.AddModelError("", "Номер телефона и пароль обязательны для заполнения");
             }
-
-            if (!ModelState.IsValid)
-                return Ok(new { message = "UserBox can be emty" });
-            if (vm.Password == "")
-            {
-                ModelState.AddModelError("", "Имя и пароль не должны совпадать");
-            }
-            if (!ModelState.IsValid)
-                return Ok(new { message = "PasswordBox can be empty" });
 
             var user = _repository.GetByPhone(Convert.ToInt32(vm.Phone));
 
-            if (user == null) return BadRequest(new { message = "Invalid Credentials" });
+            if (user == null) return BadRequest(new { message = "Phone is wrong" });
 
             if (!BCrypt.Net.BCrypt.Verify(vm.Password, user.Password))
             {
-                return BadRequest(new { message = "Invalid Credentials" });
+                return BadRequest(new { message = "Phone or password are wrong" });
             }
 
             var jwt = _jwtService.Generate(user.Id, user.RoleId, user.Name);
@@ -100,22 +80,19 @@ namespace final.Controllers
         
         public IActionResult User()
         {
-            try
-            {
-                var jwt = Request.Cookies["jwt"];
-                var token = _jwtService.Verify(jwt);
-                var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, "jwt"));
-
-                var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
-
-                if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
+           try
                 {
+                    var jwt = Request.Cookies["jwt"];
+
+                    var token = _jwtService.Verify(jwt);
+
+                    int userId = int.Parse(token.Issuer);
+
                     var user = _repository.GetById(userId).Result;
+
                     return Ok(user);
                 }
 
-                return Unauthorized();
-            }
             catch (Exception)
             {
                 return Unauthorized();

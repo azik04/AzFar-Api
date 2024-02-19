@@ -1,12 +1,8 @@
 ﻿using Final.DAL.Repositories;
-using Final.DAL.Repositories.Stadiums;
 using Final.Domain.Entity;
 using Final.Domain.Enum;
 using Final.Domain.Response;
 using Final.Domain.ViewModel.Stadiums;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using static Final.Domain.Response.IBaseResponse;
 
 namespace Final.BLL.Services.Stadiums;
@@ -24,7 +20,7 @@ public class StadiumService : IStadiumService
     {
         try
         {
-            var stadium =  _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
+            var stadium = _stadiumRepository.GetAll().FirstOrDefault(x => x.Id == id);
             var firstPhotoPath = _stadiumPhotosRepository
             .GetAll().FirstOrDefault(x => x.StadiumId == id).StadiumPhoto;
 
@@ -32,7 +28,9 @@ public class StadiumService : IStadiumService
             {
                 Adress = stadium.Adress,
                 Name = stadium.Name,
-                StadiumPhotoName = firstPhotoPath
+                StadiumPhotoName = firstPhotoPath,
+                StadiumLocation = stadium.StadiumLocation,
+                StadiumNumber = stadium.StadiumNumber,
             };
 
             return new BaseResponse<GetStadiumViewModel>()
@@ -48,7 +46,7 @@ public class StadiumService : IStadiumService
                 Description = $"[GetStadium] : {ex.Message}",
                 StatusCode = StatusCode.InternalServerError
             };
-        } 
+        }
     }
 
     public async Task<IBaseResponse<Stadium>> CreateStadium(StadiumViewModel model)
@@ -58,6 +56,8 @@ public class StadiumService : IStadiumService
             var stadium = new Stadium()
             {
                 Name = model.Name,
+                StadiumLocation = model.StadiumLocation,
+                StadiumNumber = model.StadiumNumber,
                 Adress = model.Adress,
             };
 

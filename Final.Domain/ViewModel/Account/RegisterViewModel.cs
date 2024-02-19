@@ -4,12 +4,10 @@ namespace Final.Domain.ViewModel.Account;
 
 public class RegisterViewModel
 {
-    [Required]
-    [MinLength(1)]
+    [MinLength(3,ErrorMessage ="Name shoud be more than 3 symbols")]
     public string Name { set; get; }
-    [Required]
     public int Phone { set; get; }
-    [Required]
+    [MinLength(3, ErrorMessage = "Password shoud be more than 8 symbols")]
     public string Password { set; get; }
     public int RoleId { get; set; }
 }

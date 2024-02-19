@@ -16,12 +16,12 @@ public class UserRepository : IUserRepository
     {
         return _db.Users.FirstOrDefault(u => u.Phone == phone);
     }
-
     public async Task<User> GetById(int id) =>
         await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
 
 
-    async Task<bool> IBaseRepository<User>.Create(User entity)
+
+    public async Task<bool> Create(User entity)
     {
         await _db.Users.AddAsync(entity);
         await _db.SaveChangesAsync();
@@ -42,4 +42,10 @@ public class UserRepository : IUserRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task<User> GetByPhoneandPasswod(int Phone, string Password)
+    {
+        return _db.Users.FirstOrDefaultAsync(u => u.Phone == Phone && u.Password == Password);
+    }
 }
+
